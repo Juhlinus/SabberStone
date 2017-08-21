@@ -113,7 +113,7 @@ namespace SabberStoneUnitTest.CardSets
 		// - ARMOR = 5
 		// - HERO_POWER = 43183
 		// --------------------------------------------------------
-		[Fact(Skip = "ignore")]
+		[Fact]
 		public void DeathstalkerRexxar_ICC_828()
 		{
 			// TODO DeathstalkerRexxar_ICC_828 test
@@ -121,14 +121,29 @@ namespace SabberStoneUnitTest.CardSets
 			{
 				StartPlayer = 1,
 				Player1HeroClass = CardClass.HUNTER,
+				Player1Deck = new List<Card>()
+				{
+					Cards.FromName("Bloodfen Raptor"),
+					Cards.FromName("River Crocolisk"),
+				},
 				Player2HeroClass = CardClass.HUNTER,
+				Player2Deck = new List<Card>()
+				{
+					Cards.FromName("Deathstalker Rexxar"),
+				},
+				Shuffle = false,
 				FillDecks = true,
 				FillDecksPredictably = true
 			});
 			game.StartGame();
 			game.Player1.BaseMana = 10;
 			game.Player2.BaseMana = 10;
-			//var testCard = Generic.DrawCard(game.CurrentPlayer, Cards.FromName("Deathstalker Rexxar"));
+			game.Process(PlayCardTask.Minion(game.CurrentPlayer, "Bloodfen Raptor"));
+			game.Process(PlayCardTask.Minion(game.CurrentPlayer, "River Crocolisk"));
+			game.Process(EndTurnTask.Any(game.CurrentPlayer));
+			Assert.Equal(2, game.CurrentOpponent.BoardZone.Count);
+			game.Process(PlayCardTask.Minion(game.CurrentPlayer, "Deathstalker Rexxar"));
+			Assert.Equal(1, game.CurrentOpponent.BoardZone.Count);
 		}
 
 		// ----------------------------------------- HERO - PALADIN
@@ -146,22 +161,29 @@ namespace SabberStoneUnitTest.CardSets
 		// RefTag:
 		// - LIFESTEAL = 1
 		// --------------------------------------------------------
-		[Fact(Skip = "ignore")]
+		[Fact]
 		public void UtherOfTheEbonBlade_ICC_829()
 		{
-			// TODO UtherOfTheEbonBlade_ICC_829 test
 			var game = new Game(new GameConfig
 			{
 				StartPlayer = 1,
 				Player1HeroClass = CardClass.PALADIN,
+				Player1Deck = new List<Card>()
+				{
+					Cards.FromName("Uther of the Ebon Blade")
+				},
 				Player2HeroClass = CardClass.PALADIN,
+				Shuffle = false,
 				FillDecks = true,
 				FillDecksPredictably = true
 			});
 			game.StartGame();
 			game.Player1.BaseMana = 10;
 			game.Player2.BaseMana = 10;
-			//var testCard = Generic.DrawCard(game.CurrentPlayer, Cards.FromName("Uther of the Ebon Blade"));
+			Assert.Null(game.CurrentPlayer.Hero.Weapon);
+			game.Process(PlayCardTask.Minion(game.CurrentPlayer, "Uther of the Ebon Blade"));
+			Assert.NotNull(game.CurrentPlayer.Hero.Weapon);
+			Assert.Equal("ICC_829t", game.CurrentPlayer.Hero.Weapon.Card.Id);
 		}
 
 		// ------------------------------------------ HERO - PRIEST
@@ -176,22 +198,43 @@ namespace SabberStoneUnitTest.CardSets
 		// - ARMOR = 5
 		// - HERO_POWER = 45397
 		// --------------------------------------------------------
-		[Fact(Skip = "ignore")]
+		[Fact]
 		public void ShadowreaperAnduin_ICC_830()
 		{
-			// TODO ShadowreaperAnduin_ICC_830 test
 			var game = new Game(new GameConfig
 			{
 				StartPlayer = 1,
 				Player1HeroClass = CardClass.PRIEST,
-				Player2HeroClass = CardClass.PRIEST,
+				Player1Deck = new List<Card>()
+				{
+					Cards.FromName("Shadowreaper Anduin"),
+					Cards.FromName("Bloodfen Raptor"),
+					Cards.FromName("Stranglethorn Tiger")
+				},
+				Player2HeroClass = CardClass.HUNTER,
+				Player2Deck = new List<Card>()
+				{
+					Cards.FromName("Stranglethorn Tiger"),
+					Cards.FromName("Duskboar"),
+				},
+				Shuffle = false,
 				FillDecks = true,
 				FillDecksPredictably = true
 			});
 			game.StartGame();
 			game.Player1.BaseMana = 10;
 			game.Player2.BaseMana = 10;
-			//var testCard = Generic.DrawCard(game.CurrentPlayer, Cards.FromName("Shadowreaper Anduin"));
+			game.Process(PlayCardTask.Minion(game.CurrentPlayer, "Stranglethorn Tiger"));
+			game.Process(PlayCardTask.Minion(game.CurrentPlayer, "Bloodfen Raptor"));
+			game.Process(EndTurnTask.Any(game.CurrentPlayer));
+			game.Process(PlayCardTask.Minion(game.CurrentPlayer, "Stranglethorn Tiger"));
+			game.Process(PlayCardTask.Minion(game.CurrentPlayer, "Duskboar"));
+			game.Process(EndTurnTask.Any(game.CurrentPlayer));
+			Assert.Equal(2, game.CurrentPlayer.BoardZone.Count);
+			Assert.Equal(2, game.CurrentOpponent.BoardZone.Count);
+			game.Process(PlayCardTask.Minion(game.CurrentPlayer, "Shadowreaper Anduin"));
+			Assert.Equal(1, game.CurrentPlayer.BoardZone.Count);
+			Assert.Equal(1, game.CurrentOpponent.BoardZone.Count);
 		}
 
 		// ----------------------------------------- HERO - WARLOCK

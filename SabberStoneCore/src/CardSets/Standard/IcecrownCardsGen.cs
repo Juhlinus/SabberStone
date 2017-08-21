@@ -72,12 +72,11 @@ namespace SabberStoneCore.CardSets.Standard
 			// - HERO_POWER = 43183
 			// --------------------------------------------------------
 			cards.Add("ICC_828", new List<Enchantment> {
-				// TODO [ICC_828] Deathstalker Rexxar && Test: Deathstalker Rexxar_ICC_828
 				new Enchantment
 				{
 					InfoCardId = "ICC_828e",
 					Activation = EnchantmentActivation.BATTLECRY,
-					SingleTask = null,
+					SingleTask = new DamageTask(2, EntityType.OP_MINIONS)
 				},
 			});
 
@@ -97,11 +96,10 @@ namespace SabberStoneCore.CardSets.Standard
 			// - LIFESTEAL = 1
 			// --------------------------------------------------------
 			cards.Add("ICC_829", new List<Enchantment> {
-				// TODO [ICC_829] Uther of the Ebon Blade && Test: Uther of the Ebon Blade_ICC_829
 				new Enchantment
 				{
 					Activation = EnchantmentActivation.BATTLECRY,
-					SingleTask = null,
+					SingleTask = new WeaponTask("ICC_829t"),
 				},
 			});
 
@@ -118,11 +116,13 @@ namespace SabberStoneCore.CardSets.Standard
 			// - HERO_POWER = 45397
 			// --------------------------------------------------------
 			cards.Add("ICC_830", new List<Enchantment> {
-				// TODO [ICC_830] Shadowreaper Anduin && Test: Shadowreaper Anduin_ICC_830
 				new Enchantment
 				{
 					Activation = EnchantmentActivation.BATTLECRY,
-					SingleTask = null,
+					SingleTask = ComplexTask.Create(
+						new IncludeTask(EntityType.ALLMINIONS),
+						new FilterStackTask(SelfCondition.IsTagValue(GameTag.ATK, 5, RelaSign.GEQ)),
+						new DestroyTask(EntityType.STACK))
 				},
 			});
 
